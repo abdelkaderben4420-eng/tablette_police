@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy City RP • MDT Police</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/style.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="loginScreen" class="screen active">
+      <div class="tablet-shell">
+        <div class="tablet-topbar">
+          <div class="dot"></div><div class="dot"></div><div class="camera"></div>
+          <span class="brand">Legacy City Police Department</span>
+        </div>
+        <div class="login-panel glass">
+          <div class="login-left">
+            <div class="badge">LCPD • MDT</div>
+            <h1>Terminal mobile de service</h1>
+            <p>Accès sécurisé réservé au personnel autorisé. Connectez-vous pour consulter les dossiers, la hiérarchie, les interventions et le flux braquages.</p>
+            <div class="features">
+              <span>Agents</span>
+              <span>Hiérarchie</span>
+              <span>Braquages</span>
+              <span>Amendes</span>
+              <span>Casiers</span>
+              <span>Véhicules</span>
+            </div>
+          </div>
+          <div class="login-right glass-strong">
+            <h2>Connexion agent</h2>
+            <label>Identifiant</label>
+            <input id="loginUsername" type="text" placeholder="ex: l.morel" />
+            <label>Mot de passe</label>
+            <input id="loginPassword" type="password" placeholder="••••••••" />
+            <button id="loginBtn" class="primary-btn">Accéder à la tablette</button>
+            <p class="hint">Compte test : <b>l.morel</b> / <b>mdt123</b></p>
+            <p id="loginError" class="error"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="dashboardScreen" class="screen">
+      <aside class="sidebar glass">
+        <div class="sidebar-head">
+          <div class="logo-box">MDT</div>
+          <div>
+            <div class="muted">Legacy City RP</div>
+            <div class="title-mini">Police Tablet</div>
+          </div>
+        </div>
+
+        <div class="agent-card glass-strong">
+          <div class="avatar" id="agentAvatar">LM</div>
+          <div class="agent-meta">
+            <div class="agent-name" id="agentName">Lucas Morel</div>
+            <div class="agent-rank" id="agentRank">Sergent</div>
+            <div class="agent-id" id="agentMatricule">Matricule : LCPD-204</div>
+          </div>
+          <div class="status-pill">En service</div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-btn active" data-view="home">Tableau de bord</button>
+          <button class="nav-btn" data-view="agents">Hiérarchie</button>
+          <button class="nav-btn" data-view="citizens">Citoyens</button>
+          <button class="nav-btn" data-view="vehicles">Véhicules</button>
+          <button class="nav-btn" data-view="reports">Rapports</button>
+          <button class="nav-btn" data-view="robberies">Braquages</button>
+          <button class="nav-btn" data-view="fines">Amendes & Points</button>
+          <button class="nav-btn" data-view="wanted">Avis de recherche</button>
+        </nav>
+
+        <div class="sidebar-foot">
+          <div class="role-box">
+            <span>Permission active</span>
+            <b id="permissionLabel">Niveau Sergent</b>
+          </div>
+          <button id="logoutBtn" class="secondary-btn">Déconnexion</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar glass">
+          <div>
+            <h1 id="pageTitle">Tableau de bord opérationnel</h1>
+            <p id="pageSubtitle">Contrôle rapide des opérations, unités et alertes actives.</p>
+          </div>
+          <div class="top-actions">
+            <button class="secondary-btn" id="quickIncidentBtn">Créer une intervention</button>
+            <button class="primary-btn" id="quickReportBtn">Nouveau rapport</button>
+          </div>
+        </header>
+
+        <section id="view-home" class="view active">
+          <div class="stats-grid">
+            <div class="stat glass"><span>Agents connectés</span><b id="statAgents"></b></div>
+            <div class="stat glass"><span>Braquages actifs</span><b id="statRobberies"></b></div>
+            <div class="stat glass"><span>Rapports aujourd'hui</span><b id="statReports"></b></div>
+            <div class="stat glass"><span>Avis de recherche</span><b id="statWanted"></b></div>
+          </div>
+
+          <div class="two-col">
+            <div class="panel glass">
+              <div class="panel-head">
+                <h3>Flux interventions / braquages</h3>
+                <span class="chip danger">Temps réel visuel</span>
+              </div>
+              <div id="homeRobberies" class="list"></div>
+            </div>
+            <div class="panel glass">
+              <div class="panel-head">
+                <h3>Hiérarchie en service</h3>
+                <span class="chip">Permissions</span>
+              </div>
+              <div id="homeHierarchy" class="list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-agents" class="view">
+          <div class="panel glass">
+            <div class="panel-head">
+              <h3>Hiérarchie & rôles</h3>
+              <span class="chip">Permissions par grade</span>
+            </div>
+            <div id="agentsList" class="cards-grid"></div>
+          </div>
+        </section>
+
+        <section id="view-citizens" class="view">
+          <div class="panel glass">
+            <div class="panel-head">
+              <h3>Recherche citoyen</h3>
+              <span class="chip">Casier / points / GAV</span>
+            </div>
+            <div class="search-bar">
+              <input id="citizenSearch" type="text" placeholder="Rechercher un citoyen..." />
+            </div>
+            <div id="citizensList" class="cards-grid"></div>
+          </div>
+        </section>
+
+        <section id="view-vehicles" class="view">
+          <div class="panel glass">
+            <div class="panel-head">
+              <h3>Recherche véhicule</h3>
+              <span class="chip">Plaques / propriétaire</span>
+            </div>
+            <div class="search-bar">
+              <input id="vehicleSearch" type="text" placeholder="Rechercher une plaque ou un modèle..." />
+            </div>
+            <div id="vehiclesList" class="cards-grid"></div>
+          </div>
+        </section>
+
+        <section id="view-reports" class="view">
+          <div class="panel glass">
+            <div class="panel-head">
+              <h3>Rapports d'intervention</h3>
+              <span class="chip">Archivage</span>
+            </div>
+            <form id="reportForm" class="form-grid">
+              <input id="reportTitle" type="text" placeholder="Titre du rapport" required />
+              <input id="reportTarget" type="text" placeholder="Cible / suspect" required />
+              <textarea id="reportContent" placeholder="Décris l'intervention..." required></textarea>
+              <button class="primary-btn" type="submit">Enregistrer le rapport</button>
+            </form>
+            <div id="reportsList" class="list mt"></div>
+          </div>
+        </section>
+
+        <section id="view-robberies" class="view">
+          <div class="panel glass">
+            <div class="panel-head">
+              <h3>Braquages & alertes reliées</h3>
+              <span class="chip danger">Système lié</span>
+            </div>
+            <form id="robberyForm" class="form-grid">
+              <input id="robberyLocation" type="text" placeholder="Lieu du braquage" required />
+              <select id="robberyType" required>
+                <option value="">Type d'alerte</option>
+                <option>Supérette</option>
+                <option>Banque</option>
+                <option>Bijouterie</option>
+                <option>Fourgon</option>
+                <option>Prise d'otage</option>
+              </select>
+              <select id="robberyPriority" required>
+                <option value="">Priorité</option>
+                <option>Faible</option>
+                <option>Moyenne</option>
+                <option>Élevée</option>
+                <option>Critique</option>
+              </select>
+              <textarea id="robberyDetails" placeholder="Détails intervention, unités demandées, nombre de suspects..." required></textarea>
+              <button class="primary-btn" type="submit">Créer l'alerte braquage</button>
+            </form>
+            <div id="robberiesList" class="list mt"></div>
+          </div>
+        </section>
+
+        <section id="view-fines" class="view">
+          <div class="two-col">
+            <div class="panel glass">
+              <div class="panel-head">
+                <h3>Ajouter amende / points</h3>
+                <span class="chip">Sanctions</span>
+              </div>
+              <form id="fineForm" class="form-grid">
+                <input id="fineCitizen" type="text" placeholder="Nom du citoyen" required />
+                <input id="fineAmount" type="number" placeholder="Montant amende" required />
+                <input id="finePoints" type="number" placeholder="Points ajoutés" required />
+                <textarea id="fineReason" placeholder="Motif..." required></textarea>
+                <button class="primary-btn" type="submit">Valider la sanction</button>
+              </form>
+            </div>
+            <div class="panel glass">
+              <div class="panel-head">
+                <h3>Historique sanctions</h3>
+                <span class="chip">Journal</span>
+              </div>
+              <div id="finesList" class="list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-wanted" class="view">
+          <div class="panel glass">
+            <div class="panel-head">
+              <h3>Avis de recherche</h3>
+              <span class="chip danger">Priorité</span>
+            </div>
+            <form id="wantedForm" class="form-grid">
+              <input id="wantedName" type="text" placeholder="Nom du suspect" required />
+              <input id="wantedLevel" type="text" placeholder="Niveau de dangerosité" required />
+              <textarea id="wantedReason" placeholder="Motif de recherche..." required></textarea>
+              <button class="primary-btn" type="submit">Ajouter l'avis</button>
+            </form>
+            <div id="wantedList" class="list mt"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="static/data.js"></script>
+  <script src="static/script.js"></script>
+</body>
+</html>
